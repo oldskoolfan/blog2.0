@@ -1,0 +1,13 @@
+/* custom styling for blog2.0 (in addition to bootstrap) */
+
+p.blog-content, .comment-text {
+	white-space: pre-wrap;
+}
+
+p.blog-content:before, p.blog-content:after, .comment-text:before, .comment-text:after {
+	white-space: normal;
+}
+
+.comment-form, .comment-section {
+	margin: 1.5em 0;
+}

@@ -15,6 +15,8 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
 	<!-- END BOOTSTRAP -->
+
+	<link href="<?= isset($home) ? $home : './' ?>assets/css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <body style="padding-top: 50px">
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -32,6 +34,7 @@
 					<button type="submit" class="btn btn-success">Sign in</button>
 					<button type="button" class="btn btn-default" onclick="location.href = 'register.php'">Register</button>
 				<?php else: ?>
+					<div style="display:inline-block;color:#fff;">Hey, <?=$_SESSION['username']?>!</div>
 					<?php if ($_SESSION['is_admin']): ?>
 						<a class="btn btn-default" href="<?= isset($home) ? $home . 'admin' : './admin'?>">Admin</a>
 					<?php endif; ?>
