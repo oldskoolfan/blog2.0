@@ -15,8 +15,9 @@ $blogs = $con->query('select * from blogs order by date_created desc');
 			<?php endif; ?>
 		</div>
 		<div class="panel-body">
+			<img class="img-responsive center-block" src="<?=$home ?? './'?>include/get-img.php?id=<?=$blog->image_id?>" alt="img">
 			<p class="blog-content"><?= $blog->body ?></p>
-			<?php if (isset($_SESSION['id'])): ?>
+			<?php if (!$isAdminPage && isset($_SESSION['id'])): ?>
 				<div class="comment-form">
 					<h4>Post Comment</h4>
 					<form action="include/post-comment.php" method="post">

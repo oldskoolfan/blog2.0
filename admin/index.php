@@ -16,7 +16,7 @@ $openForm = isset($_SESSION['msg']) || isset($blog);
 			</a>
 		</div>
 		<div id="blog-form" class="panel-body <?= $openForm ? 'collapse.in' : 'collapse' ?>">
-			<form action="include/blog-handler.php" method="post">
+			<form action="include/blog-handler.php" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="id" value="<?=isset($id) ? $id : '' ?>">
 				<div class="form-group">
 					<label for="title">Title</label>
@@ -24,12 +24,16 @@ $openForm = isset($_SESSION['msg']) || isset($blog);
 				</div>
 				<div class="form-group">
 					<label for="mood">Current Mood</label>
-					<select id="mood" name="mood">
+					<select id="mood" name="mood" class="form-control">
 						<option></option>
 						<?php while($mood = $moods->fetch_object()): ?>
 							<option <?= isset($moodId) && $moodId == $mood->id ? 'selected' : '' ?> value="<?=$mood->id?>" title="<?=$mood->mood_description?>"><?=$mood->mood_name?></option>
 						<?php endwhile; ?>
 					</select>
+				</div>
+				<div class="form-group">
+					<label for="image">Image</label>
+					<input id="image" name="image" type="file">
 				</div>
 				<div class="form-group">
 					<label for="body">Body</label>

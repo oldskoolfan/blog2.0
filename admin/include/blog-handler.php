@@ -12,15 +12,20 @@ try {
 	if (empty($title) || empty($body) || empty($moodId)) {
 		throw new \Exception('All fields are required');
 	}
+
 	if (empty($id)) {
 		$stmt = $con->prepare('insert blogs (title,body,mood_id, user_id)
 			values(?,?,?,?)');
 		$stmt->bind_param('ssii', $title, $body, $moodId, $userId);
+		$id = $stmt->insert_id;
 	} else {
 		$stmt = $con->prepare('update blogs set title = ?, body = ?, mood_id = ?
 			where id = ?');
 		$stmt->bind_param('ssii', $title, $body, $moodId, $id);
 	}
+
+	handleImageUpload($id, $con);
+
 	$success = $stmt->execute();
 	if (!$success) {
 		throw new \Exception($stmt->error);
@@ -33,4 +38,71 @@ try {
 	];
 } finally {
 	header('Location: ../');
+}
+
+function handleImageUpload($blogId, &$con) {
+	$allowedTypes = [
+		'image/jpeg',
+		'image/jpg',
+		'image/png',
+		'image/x-png',
+		'image/pjpeg',
+		'image/gif',
+	];
+
+	if (!isset($_FILES['image'])) {
+		return;
+	}
+
+	$tmp = $_FILES['image']['tmp_name'];
+	$filename = $_FILES['image']['name'];
+	$type = $_FILES['image']['type'];
+
+	if (!file_exists($tmp)) {
+		return;
+	}
+
+	$fileInfo = new finfo(FILEINFO_MIME_TYPE);
+
+	if (!in_array(strtolower($fileInfo->file($tmp)), $allowedTypes)) {
+		return;
+	}
+
+	$stream = fopen($tmp, 'r');
+	$data = fread($stream, filesize($tmp));
+	fclose($stream);
+
+	// delete existing image if there is one associated with this blog
+	$imageId = 0;
+	$result = $con->query('select image_id from blogs where id = ' . $blogId);
+	if ($result && $result->num_rows === 1) {
+		$imageId = $result->fetch_object()->image_id;
+	} elseif (!$result) {
+		throw new \Exception($con->error);
+	}
+
+	if ($imageId > 0) {
+		$success = $con->query('delete from images where id = ' . $imageId);
+		if (!$success) {
+			throw new \Exception($con->error);
+		}
+	}
+
+	// insert new image
+	$stmt = $con->prepare('insert into images (image_type, filename, image_data)
+		values (?,?,?)');
+	$stmt->bind_param('sss', $type, $filename, $data);
+	$success = $stmt->execute();
+	if ($success) {
+		$imageId = $stmt->insert_id;
+	} else {
+		throw new \Exception($stmt->error);
+	}
+
+	// update blog record with imageId (id of image we just created)
+	$success = $con->query("update blogs set image_id = $imageId
+		where id = $blogId");
+	if (!$success) {
+		throw new \Exception($stmt->error);
+	}
 }

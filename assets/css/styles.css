@@ -2,6 +2,7 @@
 
 p.blog-content, .comment-text {
 	white-space: pre-wrap;
+	margin: 2em 0;
 }
 
 p.blog-content:before, p.blog-content:after, .comment-text:before, .comment-text:after {
