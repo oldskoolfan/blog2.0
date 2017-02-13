@@ -34,6 +34,10 @@ $openForm = isset($_SESSION['msg']) || isset($blog);
 				<div class="form-group">
 					<label for="image">Image</label>
 					<input id="image" name="image" type="file">
+					<?php if (isset($imageId)): ?>
+						<br>
+						<img src="<?=$home?>/include/get-img.php?id=<?=$imageId?>" height="100">
+					<?php endif ?>
 				</div>
 				<div class="form-group">
 					<label for="body">Body</label>

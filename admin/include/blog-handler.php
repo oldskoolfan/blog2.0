@@ -17,19 +17,23 @@ try {
 		$stmt = $con->prepare('insert blogs (title,body,mood_id, user_id)
 			values(?,?,?,?)');
 		$stmt->bind_param('ssii', $title, $body, $moodId, $userId);
-		$id = $stmt->insert_id;
 	} else {
 		$stmt = $con->prepare('update blogs set title = ?, body = ?, mood_id = ?
 			where id = ?');
 		$stmt->bind_param('ssii', $title, $body, $moodId, $id);
 	}
 
-	handleImageUpload($id, $con);
-
 	$success = $stmt->execute();
+
 	if (!$success) {
 		throw new \Exception($stmt->error);
 	}
+
+	if (empty($id)) {
+		$id = $stmt->insert_id;
+	}
+
+	handleImageUpload($id, $con);
 
 } catch (\Throwable $ex) {
 	$_SESSION['msg'] = [
@@ -72,23 +76,17 @@ function handleImageUpload($blogId, &$con) {
 	$data = fread($stream, filesize($tmp));
 	fclose($stream);
 
-	// delete existing image if there is one associated with this blog
-	$imageId = 0;
+	// get existing image if there is one associated with this blog
+	$oldImageId = 0;
 	$result = $con->query('select image_id from blogs where id = ' . $blogId);
 	if ($result && $result->num_rows === 1) {
-		$imageId = $result->fetch_object()->image_id;
+		$oldImageId = $result->fetch_object()->image_id;
 	} elseif (!$result) {
 		throw new \Exception($con->error);
 	}
 
-	if ($imageId > 0) {
-		$success = $con->query('delete from images where id = ' . $imageId);
-		if (!$success) {
-			throw new \Exception($con->error);
-		}
-	}
-
 	// insert new image
+	$imageId = 0;
 	$stmt = $con->prepare('insert into images (image_type, filename, image_data)
 		values (?,?,?)');
 	$stmt->bind_param('sss', $type, $filename, $data);
@@ -100,9 +98,19 @@ function handleImageUpload($blogId, &$con) {
 	}
 
 	// update blog record with imageId (id of image we just created)
-	$success = $con->query("update blogs set image_id = $imageId
-		where id = $blogId");
-	if (!$success) {
-		throw new \Exception($stmt->error);
+	if ($imageId > 0) {
+		$success = $con->query("update blogs set image_id = $imageId
+			where id = $blogId");
+		if (!$success) {
+			throw new \Exception($stmt->error);
+		}
+	}
+
+	// delete old image if we found one
+	if ($oldImageId > 0) {
+		$success = $con->query('delete from images where id = ' . $oldImageId);
+		if (!$success) {
+			throw new \Exception($con->error);
+		}
 	}
 }

@@ -12,6 +12,7 @@ if (isset($_GET['id'])) {
 			$title = $blog->title;
 			$body = $blog->body;
 			$moodId = $blog->mood_id;
+			$imageId = $blog->image_id;
 		}
 	}
 }
