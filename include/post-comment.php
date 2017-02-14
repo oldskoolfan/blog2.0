@@ -6,6 +6,10 @@ try {
 	$blogId = $_POST['blog_id'];
 	$userId = $_SESSION['id'];
 
+	if (empty($body)) {
+		throw new \Exception('Comment field cannot be blank');
+	}
+
 	$stmt = $con->prepare('insert comments(body, blog_id, user_id) values (?,?,?)');
 	$stmt->bind_param('sii', $body, $blogId, $userId);
 

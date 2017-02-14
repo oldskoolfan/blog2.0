@@ -1,4 +1,20 @@
 /* custom styling for blog2.0 (in addition to bootstrap) */
+@media (max-width: 768px) {
+	#parent-home {
+		display: block;
+		width: 100%;
+		text-align: center;
+	}
+	#navbar form {
+		text-align: center;
+	}
+}
+
+div.greeting {
+	display: inline-block;
+	color: #fff;
+	margin-right: 10px;
+}
 
 p.blog-content, .comment-text {
 	white-space: pre-wrap;

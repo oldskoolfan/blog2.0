@@ -21,8 +21,17 @@
 <body style="padding-top: 50px">
 <nav class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
-		<a href="<?= isset($home) ? $home : './' ?>" class="navbar-brand"><div class="navbar-header">Blog2.0</div></a>
-		<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+		<div class="navbar-header">
+			<a href="<?= isset($home) ? $home : './' ?>" class="navbar-brand">Blog2.0</a>
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
+			<a id="parent-home" href="http://andrewfharris.com" class="navbar-brand navbar-right"><div class="navbar-header">andrewfharris.com</div></a>
 			<form class="navbar-form navbar-right" method="post" action="login.php">
 				<?php if (!isset($_SESSION['id'])): ?>
 					<div class="form-group">
@@ -34,7 +43,7 @@
 					<button type="submit" class="btn btn-success">Sign in</button>
 					<button type="button" class="btn btn-default" onclick="location.href = 'register.php'">Register</button>
 				<?php else: ?>
-					<div style="display:inline-block;color:#fff;">Hey, <?=$_SESSION['username']?>!</div>
+					<div class="greeting">Hey, <?=$_SESSION['username']?>!</div>
 					<?php if ($_SESSION['is_admin']): ?>
 						<a class="btn btn-default" href="<?= isset($home) ? $home . 'admin' : './admin'?>">Admin</a>
 					<?php endif; ?>
