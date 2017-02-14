@@ -1,0 +1,9 @@
+#
+# INSTRUCTIONS: Place this file directly in htdocs (not in any subfolder)
+# and rename to config.ini
+#
+#
+#
+# etc_directory: a directory located outside of our web root (htdocs) to store
+# mysql login creds.
+etc_directory = /Users/andrew/etc
